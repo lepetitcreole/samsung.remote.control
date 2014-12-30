@@ -1,7 +1,7 @@
-XBMC addon for Samsung TV
+KODI/XBMC addon for Samsung TV
 ==========================
 
-Automatically configure your Samsung TV at XBMC booting/shutdown!
+Automatically configure your Samsung TV at KODI/XBMC booting/shutdown!
 
 Donate :
 ------------
@@ -31,13 +31,13 @@ And maybe other Samsung TV model which supports remote control over the LAN
 
 Troubleshooting
 ------------
-Wrong HDMI input is set :
-	- addon can't select a specific HDMI input
-		=> make sure only one HDMI input is active (otherwise, the first active HDMI input will be selected by default)
-Error "Not connected" :
-	- addon can't connect to Samsung TV
-		=> check if TV IP address is right and retry
+- Wrong HDMI input is set :
+  - addon can't select a specific HDMI input
+     - make sure only one HDMI input is active (otherwise, the first active HDMI input will be selected by default)
+- Error "Not connected" :
+  - addon can't connect to Samsung TV
+     - check if TV IP address is right and retry
 
 Support 
 ------------
-Mail : lepetitcreole@live.fr
+Email : lepetitcreole@live.fr
