@@ -1,0 +1,18 @@
+<settings>
+<category label="Network">
+   <setting type="lsep" label="Network configuration" />
+   <setting id="discover" type="action" label="Start automatic discovery" action="RunScript(samsung.remote.control,start_discover)" />
+   <setting id="tv_ip" type="ipaddress" label="TV IP address" default="" />
+   <setting id="remote_ip" type="ipaddress" label="Remote IP address" default="" />
+   <setting id="remote_mac_address" type="text" label="Remote MAC address" default="" />
+</category>
+<category label="Settings">
+   <setting type="lsep" label="Input" />
+   <setting id="switchToHDMI_boot" type="bool" label="Switch to HDMI at boot" default="false"/>
+   <setting id="switchToTV_shutdown" type="bool" label="Switch to TV at shutdown" default="false"/>
+   <setting type="lsep" label="Others settings" />
+   <setting id="starting_delay" type="slider" label="Delay addon starting" default="0" range="0,1,30" option="int" />
+   <setting id="disable_notifications" type="bool" label="Disable notifications" default="false" />
+   <setting id="debug" type="bool" label="Debug" default="false" />
+</category>
+</settings>

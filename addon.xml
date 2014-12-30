@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon 
+	id="samsung.remote.control" 
+	name="Samsung TV remote control" 
+	version="1.0" 
+	provider-name="lepetitcreole">
+
+  <requires>
+	  <import addon="xbmc.python" version="2.1.0"/>
+	  <import addon="script.module.beautifulsoup" version="3.0.8"/>
+  </requires>
+
+  <extension point="xbmc.service" library="default.py" start="startup"></extension>
+
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en">Samsung add-on</summary>
+  
+    <description lang="en">
+	    Automatically configure your Samsung TV at XBMC booting/shutdown!
+    </description>
+
+    <disclaimer lang="en">This is not an official add-on</disclaimer>
+
+    <license></license>
+  
+    <platform>all</platform>
+
+    <language>en</language>
+
+    <website>lepetitcreole@live.fr</website>
+
+    <source>lepetitcreole@live.fr</source>
+  </extension>
+</addon>
