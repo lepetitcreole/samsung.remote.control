@@ -28,69 +28,69 @@ __icon__       = os.path.join(xbmcaddon.Addon().getAddonInfo('path'),"icon.png")
 def notify(title, msg=""):
  if not NOSE:
    global __icon__
-   xbmc.executebuiltin("XBMC.Notification(%s, %s, 3, %s)" % (title, msg, __icon__))
-   
+   xbmc.executebuiltin("Notification(%s, %s, 3, %s)" % (title, msg, __icon__))
+
 def logger(log):
    if DEBUG:
-      xbmc.log("[DEBUG] Samsung TV : " + log)
-        
+      xbmc.log(f"[DEBUG] Samsung TV : {log}")
+
 def start_autodisover():
   notify("Samsung TV", "Discovery in progress...")
-  
+
   remote_mac_address = ""
   remote_ip_address = ""
-  remote_ip_address = subprocess.check_output("ifconfig eth0 | grep 'inet adr' | cut -d ':' -f 2 | cut -d ' ' -f 1", shell=True)
+  remote_ip_address = subprocess.check_output("ifconfig eth0 | grep 'inet ' | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1", shell=True)
   remote_mac_address = subprocess.check_output("ifconfig eth0 | grep -Eo '([[:xdigit:]]{1,2}[:-]){5}[[:xdigit:]]{1,2}' | tr ':' '-'", shell=True)
   if remote_ip_address == "":
-      remote_ip_address = subprocess.check_output("ifconfig wlan0 | grep 'inet adr' | cut -d ':' -f 2 | cut -d ' ' -f 1", shell=True)
+      remote_ip_address = subprocess.check_output("ifconfig wlan0 | grep 'inet ' | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1", shell=True)
       remote_mac_address = subprocess.check_output("ifconfig wlan0 | grep -Eo '([[:xdigit:]]{1,2}[:-]){5}[[:xdigit:]]{1,2}' | tr ':' '-'", shell=True)
   if remote_ip_address == "":
       notify("Samsung TV", "Remote IP address not found")
       xbmc.log("[DEBUG] Samsung TV : Remote IP address not found")
       sys.exit(0)
-  xbmcaddon.Addon().setSetting("remote_ip", str(remote_ip_address))
-  xbmc.log("[DEBUG] Samsung TV : " + remote_ip_address)
-  xbmc.log("[DEBUG] Samsung TV : " + remote_mac_address)
+  xbmcaddon.Addon().setSetting("remote_ip", remote_ip_address)
+  xbmc.log(f"[DEBUG] Samsung TV : {remote_ip_address}")
+  xbmc.log(f"[DEBUG] Samsung TV : {remote_mac_address}")
   if remote_mac_address == "":
       notify("Samsung TV", "Remote MAC address not found")
   else:
       remote_mac_address = remote_mac_address.splitlines()[0]
-      xbmcaddon.Addon().setSetting("remote_mac_address", str(remote_mac_address))
+      xbmcaddon.Addon().setSetting("remote_mac_address", remote_mac_address)
       notify("Samsung TV", remote_mac_address)
-  
+
   tv_ip = ""
   port = 1900
   ip = "239.255.255.250"
   address = (ip, port)
-  data = ('M-SEARCH * HTTP/1.1\r\n' +
-'ST: urn:schemas-upnp-org:device:MediaRenderer:1\r\n' +
-'MX: 3\r\n' +
-'MAN: "ssdp:discover"\r\n' +
-'HOST: 239.255.255.250:1900\r\n\r\n') 
-  client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  
+  data = (f'M-SEARCH * HTTP/1.1\r\n'
+f'ST: urn:schemas-upnp-org:device:MediaRenderer:1\r\n'
+f'MX: 3\r\n'
+f'MAN: "ssdp:discover"\r\n'
+f'HOST: 239.255.255.250:1900\r\n\r\n')
+  client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
   num_retransmits = 0
   while(num_retransmits < 10) and tv_ip == "":
       num_retransmits += 1
-      client_socket.sendto(data, address)
-      recv_data, addr = client_socket.recvfrom(2048)
-      xbmc.log("[DEBUG] Samsung TV : " + recv_data)
-      if "dmr" in recv_data and "SamsungMRDesc.xml" in recv_data:
-        tv_ip = recv_data.split("LOCATION: http://")[1].split(":")[0]
+      client_socket.sendto(data.encode(), address)
+      recv_data = client_socket.recv(2048)
+      xbmc.log(f"[DEBUG] Samsung TV : {recv_data}")
+      if "dmr" in str(recv_data) and "SamsungMRDesc.xml" in str(recv_data):
+        tv_ip = str(recv_data).split("LOCATION: http://")[1].split(":")[0]
         xbmcaddon.Addon().setSetting("tv_ip", tv_ip)
       time.sleep(1)
-  xbmc.log("[DEBUG] Samsung TV : " + tv_ip)    
+  xbmc.log(f"[DEBUG] Samsung TV : {tv_ip}")
   if tv_ip == "":
       notify("Samsung TV", "Not found")
   else:
       notify("Samsung TV", tv_ip)
   return tv_ip
-  
+
 class Samsung:
-   
+
   def readxml(self):
     global NOSE
     global DEBUG
-    
+
     self.tv_ip                   =        xbmcaddon.Addon().getSetting("tv_ip")
     self.remote_ip               =        xbmcaddon.Addon().getSetting("remote_ip")
     self.remote_mac_address      =        xbmcaddon.Addon().getSetting("remote_mac_address")
@@ -99,11 +99,11 @@ class Samsung:
     self.starting_delay          =        xbmcaddon.Addon().getSetting("starting_delay")
     self.disable_notifications   =        xbmcaddon.Addon().getSetting("disable_notifications") == "true"
     self.debug                   =        xbmcaddon.Addon().getSetting("debug") == "true"
-    
+
     if self.disable_notifications:
       NOSE = True
     if self.debug:
-      DEBUG = True  
+      DEBUG = True
 
   def push(self, key):
     new = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -124,7 +124,7 @@ class Samsung:
     new.send(pkt)
     new.close()
     xbmc.sleep(1000)
-   
+
   def setInput(self, input):
     str1 = '%s%s' % ("KEY_", input)
     logger(str1)
@@ -134,12 +134,12 @@ class Samsung:
     logsStr = "Set input : " + input
     logger(logsStr)
     xbmc.sleep(1000)
-  
+
   def testConnection(self):
    global connected
    new = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
    try:
-      new.connect((self.tv_ip, 55000)) 
+      new.connect((self.tv_ip, 55000))
    except socket.error:
       notify("Samsung TV", "Not connected")
       connected = False
@@ -152,12 +152,12 @@ class Samsung:
       xbmc.sleep(1000)
 
 if len(sys.argv) == 2:
-    args = sys.argv[1]    
+    args = sys.argv[1]
     if sys.argv[1] == "start_discover":
       start_autodisover()
       sys.exit(0)
 
-samsung = Samsung()      
+samsung = Samsung()
 samsung.readxml()
 
 xbmc.sleep(int(samsung.starting_delay)*1000)

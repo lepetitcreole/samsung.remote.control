@@ -6,8 +6,7 @@
 	provider-name="lepetitcreole">
 
   <requires>
-	  <import addon="xbmc.python" version="2.1.0"/>
-	  <import addon="script.module.beautifulsoup" version="3.0.8"/>
+	  <import addon="xbmc.python" version="3.0.0"/>
   </requires>
 
   <extension point="xbmc.service" library="default.py" start="startup"></extension>
